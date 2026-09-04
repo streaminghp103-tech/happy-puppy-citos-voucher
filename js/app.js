@@ -12,6 +12,7 @@
   const resultPanel = document.getElementById("resultPanel");
   const resultTitle = document.getElementById("resultTitle");
   const resultMessage = document.getElementById("resultMessage");
+  const closeResultButton = document.getElementById("closeResultButton");
   const voucherCanvas = document.getElementById("voucherCanvas");
   const voucherFallback = document.getElementById("voucherFallback");
   const fallbackCode = document.getElementById("fallbackCode");
@@ -37,6 +38,17 @@
   function clearError() {
     errorState.textContent = "";
     hide(errorState);
+  }
+
+  function openResultModal() {
+    show(resultPanel);
+    document.body.classList.add("modal-open");
+    closeResultButton.focus();
+  }
+
+  function closeResultModal() {
+    hide(resultPanel);
+    document.body.classList.remove("modal-open");
   }
 
   function getUtmParams() {
@@ -119,7 +131,7 @@
     fallbackClaimDate.textContent = window.HPVoucherCanvas.formatDateIndonesia(claim.claim_day);
     fallbackExpiryDate.textContent = window.HPVoucherCanvas.formatDateIndonesia(expiryDate);
     show(voucherFallback);
-    show(resultPanel);
+    openResultModal();
 
     try {
       await window.HPVoucherCanvas.renderVoucher(voucherCanvas, claim);
@@ -130,7 +142,6 @@
       setError(error.message);
     }
 
-    resultPanel.scrollIntoView({ behavior: "smooth", block: "start" });
     trackVoucherClaimed(claim);
   }
 
@@ -147,7 +158,7 @@
     event.preventDefault();
     if (state.isSubmitting) return;
     clearError();
-    hide(resultPanel);
+    closeResultModal();
 
     const customerName = document.getElementById("customerName").value.trim();
     const whatsapp = document.getElementById("whatsapp").value.trim();
@@ -200,6 +211,15 @@
   });
 
   whatsappButton.addEventListener("click", openWhatsApp);
+  closeResultButton.addEventListener("click", closeResultModal);
+  resultPanel.addEventListener("click", (event) => {
+    if (event.target === resultPanel) closeResultModal();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !resultPanel.classList.contains("hidden")) {
+      closeResultModal();
+    }
+  });
 
   initMetaPixel();
 })();
