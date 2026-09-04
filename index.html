@@ -13,51 +13,59 @@
   <body>
     <main class="page-shell">
       <section class="claim-panel" aria-labelledby="hero-title">
-        <div class="brand-mark">Happy Puppy Citos</div>
-        <h1 id="hero-title">GRATIS KARAOKE 1 JAM</h1>
-        <p class="hero-copy">Mau karaoke GRATIS?</p>
-        <p class="hero-subcopy">Claim voucher kamu sekarang dan cobain serunya karaoke di Happy Puppy Citos!</p>
+        <div class="hero-content">
+          <div class="brand-mark">Happy Puppy Citos</div>
+          <div class="promo-preview">
+            <img src="assets/voucher-template.png" alt="Voucher Gratis Karaoke 1 Jam Happy Puppy Citos">
+          </div>
+          <h1 id="hero-title">GRATIS KARAOKE 1 JAM</h1>
+          <p class="hero-copy">Mau karaoke GRATIS?</p>
+          <p class="hero-subcopy">Claim voucher kamu sekarang dan cobain serunya karaoke di Happy Puppy Citos!</p>
 
-        <form id="claimForm" class="claim-form" novalidate>
-          <label for="customerName">Nama</label>
-          <input id="customerName" name="customerName" type="text" autocomplete="name" placeholder="Nama kamu" maxlength="80" required>
+          <form id="claimForm" class="claim-form" novalidate>
+            <label for="customerName">Nama</label>
+            <input id="customerName" name="customerName" type="text" autocomplete="name" placeholder="Nama kamu" maxlength="80" required>
 
-          <label for="whatsapp">Nomor WhatsApp</label>
-          <input id="whatsapp" name="whatsapp" type="tel" inputmode="tel" autocomplete="tel" placeholder="081234567890" maxlength="20" required>
+            <label for="whatsapp">Nomor WhatsApp</label>
+            <input id="whatsapp" name="whatsapp" type="tel" inputmode="tel" autocomplete="tel" placeholder="081234567890" maxlength="20" required>
 
-          <button id="claimButton" class="primary-button" type="submit">CLAIM VOUCHER GRATIS</button>
-        </form>
+            <button id="claimButton" class="primary-button" type="submit">CLAIM VOUCHER GRATIS</button>
+          </form>
 
-        <div id="loadingState" class="status-card hidden" role="status" aria-live="polite">
-          Sedang menyiapkan voucher kamu...
+          <div id="loadingState" class="status-card hidden" role="status" aria-live="polite">
+            Sedang menyiapkan voucher kamu...
+          </div>
+
+          <div id="errorState" class="status-card error hidden" role="alert"></div>
         </div>
-
-        <div id="errorState" class="status-card error hidden" role="alert"></div>
       </section>
 
-      <section id="resultPanel" class="result-panel hidden" aria-live="polite">
-        <h2 id="resultTitle">YEAY! VOUCHER KAMU BERHASIL DI-CLAIM</h2>
-        <p id="resultMessage">Voucher kamu sudah siap!</p>
+      <section id="resultPanel" class="result-modal hidden" aria-live="polite" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
+        <div class="modal-card">
+          <button id="closeResultButton" class="close-button" type="button" aria-label="Tutup voucher">x</button>
+          <h2 id="resultTitle">YEAY! VOUCHER KAMU BERHASIL DI-CLAIM</h2>
+          <p id="resultMessage">Voucher kamu sudah siap!</p>
 
-        <div id="voucherFallback" class="voucher-fallback hidden">
-          <p>Voucher tersimpan. Kalau gambar belum muncul, simpan data ini:</p>
-          <dl>
-            <div><dt>Kode</dt><dd id="fallbackCode">-</dd></div>
-            <div><dt>Tanggal claim</dt><dd id="fallbackClaimDate">-</dd></div>
-            <div><dt>Berlaku sampai</dt><dd id="fallbackExpiryDate">-</dd></div>
-          </dl>
-        </div>
+          <div id="voucherFallback" class="voucher-fallback hidden">
+            <p>Voucher tersimpan. Kalau gambar belum muncul, simpan data ini:</p>
+            <dl>
+              <div><dt>Kode</dt><dd id="fallbackCode">-</dd></div>
+              <div><dt>Tanggal claim</dt><dd id="fallbackClaimDate">-</dd></div>
+              <div><dt>Berlaku sampai</dt><dd id="fallbackExpiryDate">-</dd></div>
+            </dl>
+          </div>
 
-        <div class="voucher-stage">
-          <canvas id="voucherCanvas" aria-label="Voucher Happy Puppy Citos"></canvas>
-        </div>
+          <div class="voucher-stage">
+            <canvas id="voucherCanvas" aria-label="Voucher Happy Puppy Citos"></canvas>
+          </div>
 
-        <div class="action-stack">
-          <button id="saveAndWhatsappButton" class="primary-button" type="button">SIMPAN VOUCHER &amp; BUKA WHATSAPP</button>
-          <button id="downloadButton" class="secondary-button" type="button">DOWNLOAD VOUCHER</button>
-          <button id="whatsappButton" class="secondary-button" type="button">BUKA WHATSAPP</button>
+          <div class="action-stack">
+            <button id="saveAndWhatsappButton" class="primary-button" type="button">SIMPAN VOUCHER &amp; BUKA WHATSAPP</button>
+            <button id="downloadButton" class="secondary-button" type="button">DOWNLOAD VOUCHER</button>
+            <button id="whatsappButton" class="secondary-button" type="button">BUKA WHATSAPP</button>
+          </div>
+          <p id="downloadHint" class="fine-print">Jika download otomatis tidak muncul, tekan lama gambar voucher lalu simpan ke HP.</p>
         </div>
-        <p id="downloadHint" class="fine-print">Jika download otomatis tidak muncul, tekan lama gambar voucher lalu simpan ke HP.</p>
       </section>
     </main>
 
