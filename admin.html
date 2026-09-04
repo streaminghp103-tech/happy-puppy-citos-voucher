@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Voucher | Happy Puppy Citos</title>
+    <meta name="robots" content="noindex,nofollow">
+    <link rel="stylesheet" href="css/style.css">
+  </head>
+  <body class="admin-body">
+    <main class="admin-shell">
+      <header class="admin-header">
+        <div>
+          <p class="eyebrow">Dashboard Admin</p>
+          <h1>Voucher Happy Puppy Citos</h1>
+        </div>
+        <button id="logoutButton" class="secondary-button compact hidden" type="button">Logout</button>
+      </header>
+
+      <section id="loginPanel" class="admin-card">
+        <h2>Login Admin</h2>
+        <p class="muted">Masuk dengan akun admin Supabase Auth yang sudah diberi izin.</p>
+        <form id="loginForm" class="admin-form" novalidate>
+          <label for="adminEmail">Email</label>
+          <input id="adminEmail" type="email" autocomplete="email" placeholder="admin@example.com" required>
+          <label for="adminPassword">Password</label>
+          <input id="adminPassword" type="password" autocomplete="current-password" placeholder="Password" required>
+          <button id="loginButton" class="primary-button" type="submit">Login</button>
+        </form>
+        <div id="loginError" class="status-card error hidden" role="alert"></div>
+      </section>
+
+      <section id="dashboardPanel" class="hidden">
+        <div class="metrics-grid">
+          <article class="metric-card"><span>Total Claim</span><strong id="totalClaims">0</strong></article>
+          <article class="metric-card"><span>Claim Hari Ini</span><strong id="todayClaims">0</strong></article>
+          <article class="metric-card"><span>Unique Customer</span><strong id="uniqueCustomers">0</strong></article>
+          <article class="metric-card"><span>Repeat Customer</span><strong id="repeatCustomers">0</strong></article>
+        </div>
+
+        <section class="admin-card">
+          <div class="toolbar">
+            <input id="searchInput" type="search" placeholder="Cari nama, WhatsApp, kode">
+            <input id="dateFilter" type="date">
+            <button id="refreshButton" class="secondary-button compact" type="button">Refresh</button>
+            <button id="exportButton" class="secondary-button compact" type="button">Export CSV</button>
+          </div>
+          <div id="adminError" class="status-card error hidden" role="alert"></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nama</th>
+                  <th>WhatsApp</th>
+                  <th>Kode Voucher</th>
+                  <th>Tanggal Claim</th>
+                  <th>Expired</th>
+                  <th>Campaign</th>
+                </tr>
+              </thead>
+              <tbody id="claimsTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/voucher.js"></script>
+    <script src="js/admin.js"></script>
+  </body>
+</html>
