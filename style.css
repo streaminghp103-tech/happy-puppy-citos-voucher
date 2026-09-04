@@ -686,3 +686,101 @@ body:not(.admin-body) .status-card {
     aspect-ratio: 2 / 3;
   }
 }
+
+/* Hard mobile lock for the public claim page */
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+img,
+canvas {
+  max-width: 100%;
+}
+
+body:not(.admin-body) .page-shell {
+  width: 100%;
+  max-width: 430px;
+  margin-inline: auto;
+  padding: 10px;
+}
+
+body:not(.admin-body) .claim-panel {
+  width: 100%;
+  max-width: 100%;
+  padding: 12px;
+}
+
+body:not(.admin-body) .hero-content {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+body:not(.admin-body) .promo-preview {
+  width: min(100%, 300px);
+  margin: 0 auto 12px;
+}
+
+body:not(.admin-body) .promo-preview img {
+  width: 100%;
+  height: auto;
+  max-height: min(46dvh, 450px);
+  aspect-ratio: 2 / 3;
+  object-fit: contain;
+}
+
+body:not(.admin-body) h1 {
+  font-size: clamp(1.72rem, 9vw, 2.45rem);
+  line-height: 0.95;
+}
+
+body:not(.admin-body) .hero-copy {
+  font-size: 1rem;
+}
+
+body:not(.admin-body) .hero-subcopy {
+  font-size: 0.88rem;
+}
+
+body:not(.admin-body) .claim-form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+body:not(.admin-body) .claim-form label,
+body:not(.admin-body) .claim-form input,
+body:not(.admin-body) .claim-form .primary-button {
+  grid-row: auto;
+  grid-column: auto;
+}
+
+body:not(.admin-body) input,
+body:not(.admin-body) .primary-button {
+  min-height: 46px;
+}
+
+@media (max-height: 740px) {
+  body:not(.admin-body) .page-shell {
+    align-items: start;
+  }
+
+  body:not(.admin-body) .promo-preview {
+    width: min(100%, 250px);
+  }
+
+  body:not(.admin-body) .promo-preview img {
+    max-height: 38dvh;
+  }
+
+  body:not(.admin-body) h1 {
+    font-size: clamp(1.55rem, 8vw, 2.1rem);
+    margin-bottom: 6px;
+  }
+
+  body:not(.admin-body) .hero-subcopy {
+    margin-bottom: 10px;
+  }
+}
