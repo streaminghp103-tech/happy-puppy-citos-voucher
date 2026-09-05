@@ -16,6 +16,8 @@
   const settingsForm = document.getElementById("settingsForm");
   const settingWhatsapp = document.getElementById("settingWhatsapp");
   const settingTemplatePath = document.getElementById("settingTemplatePath");
+  const settingTemplateFile = document.getElementById("settingTemplateFile");
+  const templatePreview = document.getElementById("templatePreview");
   const saveSettingsButton = document.getElementById("saveSettingsButton");
   const settingsMessage = document.getElementById("settingsMessage");
 
@@ -34,6 +36,7 @@
 
   function clearMessage(element) {
     element.textContent = "";
+    element.classList.remove("error");
     hide(element);
   }
 
@@ -137,14 +140,17 @@
   async function loadSettings() {
     settingWhatsapp.value = window.CONFIG.whatsappNumber || "";
     settingTemplatePath.value = window.CONFIG.templatePath || "assets/voucher-template.png";
+    templatePreview.src = settingTemplatePath.value;
 
     try {
       const settings = await window.HPVoucherSupabase.loadCampaignSettings();
       Object.assign(window.CONFIG, settings);
       settingWhatsapp.value = window.CONFIG.whatsappNumber || "";
       settingTemplatePath.value = window.CONFIG.templatePath || "assets/voucher-template.png";
+      templatePreview.src = settingTemplatePath.value;
       clearMessage(settingsMessage);
     } catch (error) {
+      settingsMessage.classList.add("error");
       setMessage(settingsMessage, error.message || "Pengaturan belum bisa dimuat.");
     }
   }
@@ -208,6 +214,7 @@
     searchInput.value = "";
     startDateFilter.value = "";
     endDateFilter.value = "";
+    renderTable();
     try {
       await loadClaims();
     } catch (error) {
@@ -269,7 +276,8 @@
     clearMessage(settingsMessage);
 
     const whatsappNumber = window.HPVoucherSupabase.normalizeWhatsApp(settingWhatsapp.value);
-    const templatePath = settingTemplatePath.value.trim();
+    const selectedFile = settingTemplateFile.files[0];
+    let templatePath = settingTemplatePath.value.trim();
 
     if (!window.HPVoucherSupabase.isValidIndonesianWhatsApp(whatsappNumber)) {
       setMessage(settingsMessage, "Nomor WhatsApp belum valid. Contoh: 6285348773757.");
@@ -277,7 +285,7 @@
       return;
     }
 
-    if (!templatePath) {
+    if (!selectedFile && !templatePath) {
       setMessage(settingsMessage, "Gambar voucher wajib diisi.");
       settingsMessage.classList.add("error");
       return;
@@ -285,6 +293,11 @@
 
     saveSettingsButton.disabled = true;
     try {
+      if (selectedFile) {
+        saveSettingsButton.textContent = "Mengupload...";
+        templatePath = await window.HPVoucherSupabase.uploadVoucherTemplate(selectedFile);
+      }
+      saveSettingsButton.textContent = "Menyimpan...";
       await window.HPVoucherSupabase.saveCampaignSettings({
         whatsappNumber,
         templatePath
@@ -292,6 +305,9 @@
       window.CONFIG.whatsappNumber = whatsappNumber;
       window.CONFIG.templatePath = templatePath;
       settingWhatsapp.value = whatsappNumber;
+      settingTemplatePath.value = templatePath;
+      settingTemplateFile.value = "";
+      templatePreview.src = templatePath;
       settingsMessage.classList.remove("error");
       setMessage(settingsMessage, "Pengaturan berhasil disimpan.");
     } catch (error) {
@@ -299,7 +315,18 @@
       setMessage(settingsMessage, error.message || "Pengaturan gagal disimpan.");
     } finally {
       saveSettingsButton.disabled = false;
+      saveSettingsButton.textContent = "Simpan Pengaturan";
     }
+  });
+
+  settingTemplateFile.addEventListener("change", () => {
+    const selectedFile = settingTemplateFile.files[0];
+    if (!selectedFile) {
+      templatePreview.src = settingTemplatePath.value || "assets/voucher-template.png";
+      return;
+    }
+
+    templatePreview.src = URL.createObjectURL(selectedFile);
   });
 
   searchInput.addEventListener("input", renderTable);

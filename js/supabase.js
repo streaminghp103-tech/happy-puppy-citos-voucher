@@ -93,6 +93,46 @@
     if (error) throw error;
   }
 
+  async function uploadVoucherTemplate(file) {
+    const client = createClient();
+    if (!client) {
+      throw new Error("Konfigurasi Supabase belum diisi di js/config.js.");
+    }
+
+    const allowedTypes = ["image/png", "image/jpeg", "image/webp"];
+    if (!allowedTypes.includes(file.type)) {
+      throw new Error("Format gambar harus PNG, JPG, atau WEBP.");
+    }
+
+    const maxSize = 8 * 1024 * 1024;
+    if (file.size > maxSize) {
+      throw new Error("Ukuran gambar maksimal 8 MB.");
+    }
+
+    const extension = (file.name.split(".").pop() || "png").toLowerCase().replace(/[^a-z0-9]/g, "");
+    const fileName = `voucher-template-${Date.now()}.${extension || "png"}`;
+    const filePath = `campaign/${fileName}`;
+    const { error: uploadError } = await client.storage
+      .from("voucher-assets")
+      .upload(filePath, file, {
+        cacheControl: "3600",
+        contentType: file.type,
+        upsert: true
+      });
+
+    if (uploadError) throw uploadError;
+
+    const { data } = client.storage
+      .from("voucher-assets")
+      .getPublicUrl(filePath);
+
+    if (!data.publicUrl) {
+      throw new Error("URL gambar hasil upload belum tersedia.");
+    }
+
+    return data.publicUrl;
+  }
+
   window.HPVoucherSupabase = {
     createClient,
     hasSupabaseConfig,
@@ -100,6 +140,7 @@
     isValidIndonesianWhatsApp,
     claimVoucher,
     loadCampaignSettings,
-    saveCampaignSettings
+    saveCampaignSettings,
+    uploadVoucherTemplate
   };
 })();
