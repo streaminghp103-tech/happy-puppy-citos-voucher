@@ -48,10 +48,18 @@
             </div>
             <div>
               <label for="settingTemplatePath">Gambar Voucher</label>
-              <input id="settingTemplatePath" type="text" placeholder="assets/voucher-template.png" required>
+              <input id="settingTemplatePath" type="text" placeholder="assets/voucher-template.png" readonly>
+            </div>
+            <div>
+              <label for="settingTemplateFile">Upload Gambar Baru</label>
+              <input id="settingTemplateFile" type="file" accept="image/png,image/jpeg,image/webp">
             </div>
             <button id="saveSettingsButton" class="primary-button compact" type="submit">Simpan Pengaturan</button>
           </form>
+          <div class="template-preview-wrap">
+            <span>Preview gambar aktif</span>
+            <img id="templatePreview" src="assets/voucher-template.png" alt="Preview gambar voucher">
+          </div>
           <div id="settingsMessage" class="status-card hidden" role="status"></div>
         </section>
 
