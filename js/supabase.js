@@ -53,11 +53,53 @@
     return Array.isArray(data) ? data[0] : data;
   }
 
+  async function loadCampaignSettings() {
+    const client = createClient();
+    if (!client) return {};
+
+    const { data, error } = await client
+      .from("campaign_settings")
+      .select("setting_key, setting_value")
+      .in("setting_key", ["whatsappNumber", "templatePath"]);
+
+    if (error) {
+      console.warn("Pengaturan campaign belum tersedia:", error.message);
+      return {};
+    }
+
+    return (data || []).reduce((settings, row) => {
+      settings[row.setting_key] = row.setting_value;
+      return settings;
+    }, {});
+  }
+
+  async function saveCampaignSettings(settings) {
+    const client = createClient();
+    if (!client) {
+      throw new Error("Konfigurasi Supabase belum diisi di js/config.js.");
+    }
+
+    const rows = Object.entries(settings)
+      .filter(([, value]) => String(value || "").trim())
+      .map(([setting_key, setting_value]) => ({
+        setting_key,
+        setting_value: String(setting_value).trim()
+      }));
+
+    const { error } = await client
+      .from("campaign_settings")
+      .upsert(rows, { onConflict: "setting_key" });
+
+    if (error) throw error;
+  }
+
   window.HPVoucherSupabase = {
     createClient,
     hasSupabaseConfig,
     normalizeWhatsApp,
     isValidIndonesianWhatsApp,
-    claimVoucher
+    claimVoucher,
+    loadCampaignSettings,
+    saveCampaignSettings
   };
 })();

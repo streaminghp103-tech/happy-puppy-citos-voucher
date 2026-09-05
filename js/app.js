@@ -75,6 +75,11 @@
     /* eslint-enable */
   }
 
+  async function initCampaignSettings() {
+    const settings = await window.HPVoucherSupabase.loadCampaignSettings();
+    Object.assign(window.CONFIG, settings);
+  }
+
   function trackVoucherClaimed(claim) {
     if (window.fbq && window.CONFIG.metaPixelId) {
       window.fbq("trackCustom", "VoucherClaimed", {
@@ -221,5 +226,7 @@
     }
   });
 
-  initMetaPixel();
+  initCampaignSettings()
+    .catch((error) => console.warn("Pengaturan campaign gagal dimuat:", error.message))
+    .finally(initMetaPixel);
 })();
