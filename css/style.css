@@ -1609,9 +1609,41 @@ body.campaign-page .voucher-fallback {
   gap: 6px;
 }
 
+.settings-form input[readonly] {
+  color: var(--muted);
+  background: #f5f1eb;
+}
+
+.settings-form input[type="file"] {
+  padding: 11px 12px;
+  background: #ffffff;
+}
+
+.template-preview-wrap {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.template-preview-wrap span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+.template-preview-wrap img {
+  display: block;
+  width: min(100%, 340px);
+  max-height: 420px;
+  object-fit: contain;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #150a14;
+}
+
 @media (min-width: 820px) {
   .settings-form {
-    grid-template-columns: minmax(190px, 0.75fr) minmax(260px, 1.25fr) auto;
+    grid-template-columns: minmax(180px, 0.7fr) minmax(260px, 1.1fr) minmax(230px, 0.9fr) auto;
     align-items: end;
   }
 }
