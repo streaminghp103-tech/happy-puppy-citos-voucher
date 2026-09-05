@@ -38,12 +38,37 @@
           <article class="metric-card"><span>Repeat Customer</span><strong id="repeatCustomers">0</strong></article>
         </div>
 
+        <section class="admin-card settings-card">
+          <h2>Pengaturan Campaign</h2>
+          <p class="muted">Ubah nomor WhatsApp tujuan dan gambar template voucher yang dipakai saat customer claim.</p>
+          <form id="settingsForm" class="settings-form" novalidate>
+            <div>
+              <label for="settingWhatsapp">Nomor WhatsApp Tujuan</label>
+              <input id="settingWhatsapp" type="tel" inputmode="tel" placeholder="6285348773757" required>
+            </div>
+            <div>
+              <label for="settingTemplatePath">Gambar Voucher</label>
+              <input id="settingTemplatePath" type="text" placeholder="assets/voucher-template.png" required>
+            </div>
+            <button id="saveSettingsButton" class="primary-button compact" type="submit">Simpan Pengaturan</button>
+          </form>
+          <div id="settingsMessage" class="status-card hidden" role="status"></div>
+        </section>
+
         <section class="admin-card">
           <div class="toolbar">
             <input id="searchInput" type="search" placeholder="Cari nama, WhatsApp, kode">
-            <input id="dateFilter" type="date">
+            <div class="date-field">
+              <label for="startDateFilter">Dari</label>
+              <input id="startDateFilter" type="date">
+            </div>
+            <div class="date-field">
+              <label for="endDateFilter">Sampai</label>
+              <input id="endDateFilter" type="date">
+            </div>
+            <button id="resetFilterButton" class="secondary-button compact" type="button">Reset</button>
             <button id="refreshButton" class="secondary-button compact" type="button">Refresh</button>
-            <button id="exportButton" class="secondary-button compact" type="button">Export CSV</button>
+            <button id="exportButton" class="secondary-button compact" type="button">Export Excel</button>
           </div>
           <div id="adminError" class="status-card error hidden" role="alert"></div>
           <div class="table-wrap">
