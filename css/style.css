@@ -784,3 +784,704 @@ body:not(.admin-body) .primary-button {
     margin-bottom: 10px;
   }
 }
+
+/* Final campaign landing, portrait-first */
+body.campaign-page,
+body:not(.admin-body) {
+  min-height: 100dvh;
+  background:
+    linear-gradient(180deg, rgba(9, 4, 12, 0.3), rgba(9, 4, 12, 0.92)),
+    url("../assets/voucher-template.png") center top / cover fixed,
+    #09040c;
+}
+
+body.campaign-page::before,
+body:not(.admin-body)::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(255, 0, 122, 0.2), transparent 25%, transparent 75%, rgba(255, 0, 122, 0.18)),
+    radial-gradient(circle at 15% 85%, rgba(255, 0, 122, 0.28), transparent 7rem),
+    radial-gradient(circle at 92% 10%, rgba(255, 189, 74, 0.18), transparent 8rem);
+}
+
+body.campaign-page .page-shell,
+body:not(.admin-body) .page-shell {
+  width: 100%;
+  max-width: 430px;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: 10px;
+  display: grid;
+  align-items: center;
+  overflow: hidden;
+}
+
+body.campaign-page .claim-panel,
+body:not(.admin-body) .claim-panel {
+  width: 100%;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+body.campaign-page .claim-panel::before,
+body:not(.admin-body) .claim-panel::before {
+  display: none;
+}
+
+body.campaign-page .hero-content,
+body:not(.admin-body) .hero-content {
+  width: 100%;
+  display: grid;
+  gap: 10px;
+  color: #ffffff;
+  text-align: center;
+}
+
+.campaign-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.brand-lockup {
+  display: grid;
+  justify-items: start;
+  gap: 2px;
+  line-height: 1;
+}
+
+.brand-lockup strong {
+  color: #ffffff;
+  font-size: clamp(1.45rem, 8vw, 2.15rem);
+  font-weight: 950;
+  text-shadow: 0 3px 0 rgba(0, 0, 0, 0.38);
+}
+
+.brand-lockup span {
+  justify-self: center;
+  padding: 3px 14px;
+  border: 2px solid #ff1c85;
+  border-radius: 999px;
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 950;
+  box-shadow: 0 0 16px rgba(255, 28, 133, 0.55);
+}
+
+.campaign-menu {
+  display: grid;
+  gap: 5px;
+  width: 34px;
+}
+
+.campaign-menu span {
+  height: 4px;
+  border-radius: 999px;
+  background: #ffffff;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.45);
+}
+
+.campaign-badge {
+  justify-self: center;
+  max-width: 100%;
+  padding: 7px 16px;
+  border: 2px solid #ff1c85;
+  border-radius: 999px;
+  color: #ffffff;
+  background: rgba(8, 4, 10, 0.52);
+  box-shadow: 0 0 18px rgba(255, 28, 133, 0.4);
+  font-size: clamp(0.72rem, 3.3vw, 0.92rem);
+  font-weight: 950;
+}
+
+body.campaign-page .brand-mark,
+body:not(.admin-body) .brand-mark,
+body.campaign-page .promo-preview,
+body:not(.admin-body) .promo-preview {
+  display: none;
+}
+
+body.campaign-page h1,
+body:not(.admin-body) h1 {
+  margin: 0;
+  max-width: none;
+  color: #ff2f96;
+  font-size: clamp(2.42rem, 15vw, 4.75rem);
+  line-height: 0.86;
+  text-transform: uppercase;
+  text-shadow:
+    0 2px 0 #ffffff,
+    0 0 18px rgba(255, 47, 150, 0.75),
+    0 12px 30px rgba(0, 0, 0, 0.42);
+}
+
+body.campaign-page h1 span,
+body:not(.admin-body) h1 span {
+  display: block;
+  color: #ffffff;
+  font-size: 1.18em;
+  transform: rotate(-3deg);
+  -webkit-text-stroke: 1px #ff2f96;
+}
+
+body.campaign-page .hero-copy,
+body:not(.admin-body) .hero-copy {
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(0.98rem, 4.1vw, 1.2rem);
+  line-height: 1.25;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.55);
+}
+
+body.campaign-page .hero-subcopy,
+body:not(.admin-body) .hero-subcopy {
+  display: none;
+}
+
+.promo-pills {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.promo-pills span {
+  min-height: 42px;
+  display: grid;
+  place-items: center;
+  padding: 8px 10px;
+  border: 2px solid #ff1c85;
+  border-radius: 999px;
+  color: #ffffff;
+  background: rgba(8, 4, 10, 0.62);
+  box-shadow: inset 0 0 18px rgba(255, 28, 133, 0.16), 0 0 16px rgba(255, 28, 133, 0.25);
+  font-size: clamp(0.78rem, 3.5vw, 0.94rem);
+  font-weight: 950;
+}
+
+.promo-pills span:first-child {
+  border-color: transparent;
+  background: linear-gradient(135deg, #ff0f62, #ff1ca8);
+  box-shadow: 0 12px 24px rgba(255, 15, 98, 0.28);
+}
+
+.ticket-preview {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.45fr 0.75fr;
+  min-height: 126px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.36);
+}
+
+.ticket-preview::before,
+.ticket-preview::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 24px;
+  height: 42px;
+  border-radius: 999px;
+  background: rgba(9, 4, 12, 0.92);
+  transform: translateY(-50%);
+  z-index: 2;
+}
+
+.ticket-preview::before {
+  left: -13px;
+}
+
+.ticket-preview::after {
+  right: -13px;
+}
+
+.ticket-image {
+  min-width: 0;
+  overflow: hidden;
+  background: #08050a;
+}
+
+.ticket-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top left;
+}
+
+.ticket-side {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 7px;
+  padding: 10px 9px;
+  color: #120f13;
+  background: #ffffff;
+  border-left: 2px dashed #d9d3db;
+}
+
+.ticket-side strong {
+  font-size: clamp(1rem, 4.2vw, 1.25rem);
+  line-height: 1;
+  font-weight: 950;
+  transform: rotate(-7deg);
+}
+
+.ticket-side span {
+  color: #ff1c85;
+  font-size: clamp(0.62rem, 2.8vw, 0.78rem);
+  font-weight: 950;
+}
+
+.barcode {
+  width: min(100%, 92px);
+  height: 34px;
+  background: repeating-linear-gradient(90deg, #111 0 3px, transparent 3px 6px, #111 6px 8px, transparent 8px 12px);
+}
+
+.ticket-side small {
+  font-size: clamp(0.55rem, 2.4vw, 0.68rem);
+  font-weight: 950;
+  line-height: 1.08;
+}
+
+.claim-card {
+  padding: 14px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.34), inset 0 -18px 34px rgba(255, 15, 98, 0.08);
+}
+
+body.campaign-page .claim-form,
+body:not(.admin-body) .claim-form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 7px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+}
+
+body.campaign-page .claim-form label,
+body:not(.admin-body) .claim-form label {
+  color: #36313a;
+  text-align: left;
+  font-size: 0.82rem;
+}
+
+body.campaign-page input,
+body:not(.admin-body) input {
+  min-height: 44px;
+  border: 1px solid #dfe5ef;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #ffffff, #f7fbff);
+  font-size: 0.95rem;
+}
+
+body.campaign-page .primary-button,
+body:not(.admin-body) .primary-button {
+  min-height: 50px;
+  margin-top: 8px;
+  border-radius: 999px;
+  font-size: clamp(0.95rem, 4vw, 1.1rem);
+}
+
+.benefit-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(10px);
+}
+
+.benefit-strip span {
+  display: grid;
+  gap: 2px;
+  padding: 10px 7px;
+  color: rgba(255, 255, 255, 0.78);
+  background: rgba(4, 5, 10, 0.55);
+  font-size: clamp(0.62rem, 2.8vw, 0.76rem);
+  line-height: 1.18;
+}
+
+.benefit-strip strong {
+  color: #ffffff;
+  font-size: clamp(0.72rem, 3vw, 0.84rem);
+}
+
+body.campaign-page .status-card,
+body:not(.admin-body) .status-card {
+  margin-top: 10px;
+  text-align: left;
+}
+
+@media (max-width: 380px), (max-height: 760px) {
+  body.campaign-page .page-shell,
+  body:not(.admin-body) .page-shell {
+    padding: 8px;
+    align-items: start;
+  }
+
+  body.campaign-page .hero-content,
+  body:not(.admin-body) .hero-content {
+    gap: 7px;
+  }
+
+  .campaign-badge {
+    padding: 5px 12px;
+  }
+
+  body.campaign-page h1,
+  body:not(.admin-body) h1 {
+    font-size: clamp(2rem, 13vw, 3.2rem);
+  }
+
+  .ticket-preview {
+    min-height: 108px;
+  }
+
+  .claim-card {
+    padding: 11px;
+  }
+
+  body.campaign-page input,
+  body:not(.admin-body) input {
+    min-height: 40px;
+    padding-block: 9px;
+  }
+
+  body.campaign-page .primary-button,
+  body:not(.admin-body) .primary-button {
+    min-height: 44px;
+  }
+
+  .benefit-strip span {
+    padding: 8px 6px;
+  }
+}
+
+/* Campaign page v2: fixed portrait mobile composition */
+html:has(body.campaign-page),
+body.campaign-page {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body.campaign-page {
+  min-height: 100svh;
+  color: #ffffff;
+  background:
+    linear-gradient(180deg, rgba(5, 3, 8, 0.08), rgba(5, 3, 8, 0.58) 58%, rgba(5, 3, 8, 0.9)),
+    url("../assets/background-neon-karaoke.png") center center / cover no-repeat,
+    #060208;
+}
+
+body.campaign-page::before {
+  background:
+    radial-gradient(circle at 4% 86%, rgba(255, 0, 125, 0.22), transparent 6rem),
+    radial-gradient(circle at 94% 84%, rgba(255, 0, 125, 0.2), transparent 5.5rem),
+    linear-gradient(90deg, rgba(255, 0, 125, 0.1), transparent 18%, transparent 82%, rgba(255, 0, 125, 0.12));
+}
+
+body.campaign-page .page-shell {
+  width: 100vw;
+  max-width: 430px;
+  height: 100svh;
+  min-height: 100svh;
+  margin: 0 auto;
+  padding: clamp(8px, 2.5vw, 14px);
+  display: grid;
+  align-items: center;
+  overflow: hidden;
+}
+
+body.campaign-page .claim-panel {
+  width: 100%;
+  height: calc(100svh - clamp(16px, 5vw, 28px));
+  max-height: 910px;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+body.campaign-page .hero-content {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: clamp(6px, 1.4svh, 12px);
+  text-align: center;
+}
+
+body.campaign-page .campaign-header {
+  min-height: 42px;
+  flex: 0 0 auto;
+}
+
+body.campaign-page .brand-lockup {
+  width: min(46vw, 190px);
+  max-width: 190px;
+  display: block;
+}
+
+body.campaign-page .brand-lockup strong,
+body.campaign-page .brand-lockup span {
+  display: none;
+}
+
+body.campaign-page .brand-logo {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 7px 10px rgba(0, 0, 0, 0.62));
+}
+
+body.campaign-page .campaign-menu {
+  width: 34px;
+  flex: 0 0 34px;
+}
+
+body.campaign-page .campaign-menu span {
+  height: 5px;
+}
+
+body.campaign-page .campaign-badge {
+  flex: 0 0 auto;
+  padding: clamp(5px, 1.6svh, 8px) clamp(14px, 5vw, 24px);
+  border-width: 2px;
+  background: rgba(9, 4, 12, 0.52);
+  font-size: clamp(0.76rem, 3.35vw, 0.96rem);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+body.campaign-page h1 {
+  flex: 0 0 auto;
+  margin: 0;
+  max-width: 100%;
+  color: #ff2490;
+  font-size: clamp(2.55rem, 13.8vw, 4.5rem);
+  line-height: 0.84;
+  text-transform: uppercase;
+  text-shadow:
+    0 2px 0 #ffffff,
+    0 0 13px rgba(255, 36, 144, 0.95),
+    0 12px 28px rgba(0, 0, 0, 0.55);
+}
+
+body.campaign-page h1 span {
+  display: block;
+  color: #ffffff;
+  font-size: 1.16em;
+  transform: rotate(-3deg);
+  -webkit-text-stroke: 1px #ff2490;
+}
+
+body.campaign-page .hero-copy {
+  flex: 0 0 auto;
+  margin: 0;
+  font-size: clamp(0.98rem, 3.9vw, 1.22rem);
+  line-height: 1.18;
+}
+
+body.campaign-page .promo-pills {
+  flex: 0 0 auto;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(7px, 2vw, 10px);
+}
+
+body.campaign-page .promo-pills span {
+  min-height: clamp(36px, 5.7svh, 48px);
+  padding: 7px 8px;
+  font-size: clamp(0.74rem, 3.35vw, 0.98rem);
+  line-height: 1;
+}
+
+body.campaign-page .ticket-preview {
+  flex: 0 0 auto;
+  width: 100%;
+  min-height: 0;
+  aspect-ratio: 2.46 / 1;
+  display: block;
+  overflow: visible;
+  border-radius: 8px;
+  background: transparent;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.46);
+}
+
+body.campaign-page .ticket-preview::before,
+body.campaign-page .ticket-preview::after {
+  display: none;
+}
+
+body.campaign-page .ticket-preview > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+body.campaign-page .ticket-image,
+body.campaign-page .ticket-side {
+  display: none;
+}
+
+body.campaign-page .claim-card {
+  flex: 0 0 auto;
+  width: 100%;
+  padding: clamp(12px, 3.5vw, 18px);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow:
+    0 20px 46px rgba(0, 0, 0, 0.4),
+    inset 0 -22px 38px rgba(255, 0, 125, 0.07);
+}
+
+body.campaign-page .claim-form {
+  gap: clamp(6px, 1.15svh, 10px);
+}
+
+body.campaign-page .claim-form label {
+  color: #28222d;
+  font-size: clamp(0.78rem, 3.2vw, 0.92rem);
+  line-height: 1;
+}
+
+body.campaign-page input {
+  min-height: clamp(40px, 6.2svh, 54px);
+  padding: 9px 14px;
+  border-radius: 8px;
+  font-size: clamp(0.95rem, 4.1vw, 1.12rem);
+}
+
+body.campaign-page .primary-button {
+  min-height: clamp(44px, 7svh, 58px);
+  margin-top: clamp(5px, 1svh, 10px);
+  border-radius: 999px;
+  font-size: clamp(0.92rem, 3.9vw, 1.08rem);
+  box-shadow: 0 16px 34px rgba(255, 0, 125, 0.32);
+}
+
+body.campaign-page .benefit-strip {
+  flex: 0 0 auto;
+  border-radius: 8px;
+}
+
+body.campaign-page .benefit-strip span {
+  min-width: 0;
+  padding: clamp(7px, 1.5svh, 11px) 6px;
+  font-size: clamp(0.6rem, 2.75vw, 0.78rem);
+}
+
+body.campaign-page .benefit-strip strong {
+  font-size: clamp(0.68rem, 3vw, 0.86rem);
+}
+
+.campaign-footer {
+  flex: 0 0 auto;
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+  color: rgba(255, 255, 255, 0.78);
+  letter-spacing: 0.22em;
+  line-height: 1;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.62);
+}
+
+.campaign-footer::before {
+  content: "?";
+  color: #ff1490;
+  font-size: clamp(1rem, 4.8vw, 1.45rem);
+  letter-spacing: 0;
+  text-shadow: 0 0 16px rgba(255, 20, 144, 0.85);
+}
+
+.campaign-footer span {
+  font-size: clamp(0.68rem, 2.9vw, 0.82rem);
+  font-weight: 900;
+}
+
+.campaign-footer small {
+  font-size: clamp(0.58rem, 2.45vw, 0.72rem);
+}
+
+@media (max-height: 720px) {
+  body.campaign-page .hero-content {
+    gap: 6px;
+  }
+
+  body.campaign-page .campaign-header {
+    min-height: 34px;
+  }
+
+  body.campaign-page .brand-lockup {
+    width: min(40vw, 156px);
+  }
+
+  body.campaign-page h1 {
+    font-size: clamp(2.16rem, 12vw, 3.6rem);
+  }
+
+  body.campaign-page .campaign-badge {
+    padding-block: 5px;
+  }
+
+  body.campaign-page .promo-pills span {
+    min-height: 34px;
+  }
+
+  body.campaign-page .ticket-preview {
+    width: 92%;
+    margin-inline: auto;
+  }
+
+  body.campaign-page .claim-card {
+    padding: 11px;
+  }
+
+  body.campaign-page input {
+    min-height: 38px;
+  }
+
+  body.campaign-page .primary-button {
+    min-height: 42px;
+  }
+
+  body.campaign-page .benefit-strip span {
+    padding-block: 6px;
+  }
+}
+
+@media (max-height: 630px) {
+  body.campaign-page .campaign-badge,
+  body.campaign-page .benefit-strip {
+    display: none;
+  }
+
+  body.campaign-page h1 {
+    font-size: clamp(2rem, 11vw, 3.1rem);
+  }
+
+  body.campaign-page .ticket-preview {
+    width: 86%;
+  }
+}
