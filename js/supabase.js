@@ -94,7 +94,7 @@
     const { data, error } = await client
       .from("campaign_settings")
       .select("setting_key, setting_value")
-      .in("setting_key", ["whatsappNumber", "templatePath"]);
+      .in("setting_key", ["whatsappNumber", "templatePath", "whatsappMessageTemplate"]);
 
     if (error) {
       console.warn("Pengaturan campaign belum tersedia:", error.message);

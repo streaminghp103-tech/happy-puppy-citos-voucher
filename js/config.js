@@ -9,6 +9,7 @@ window.CONFIG = {
   fixedExpiryDate: "",
   metaPixelId: "",
   campaignName: "happy-puppy-citos-free-room",
+  whatsappMessageTemplate: "Halo Happy Puppy Citos\n\nSaya sudah claim Voucher GRATIS KARAOKE 1 JAM\n\nNama: {nama}\nKode Voucher: {kode}\nTanggal Claim: {tanggal_claim}\nBerlaku Sampai: {tanggal_expired}\n\nSaya akan melampirkan foto voucher yang baru saja tersimpan di HP saya.\n\nSaya ingin menggunakan voucher ini untuk karaoke di Happy Puppy Citos.",
 
   // Biasanya tidak perlu diubah
   timezone: "Asia/Makassar",

@@ -18,6 +18,7 @@
   const settingWhatsapp = document.getElementById("settingWhatsapp");
   const settingTemplatePath = document.getElementById("settingTemplatePath");
   const settingTemplateFile = document.getElementById("settingTemplateFile");
+  const settingWhatsappMessage = document.getElementById("settingWhatsappMessage");
   const templatePreview = document.getElementById("templatePreview");
   const saveSettingsButton = document.getElementById("saveSettingsButton");
   const settingsMessage = document.getElementById("settingsMessage");
@@ -224,6 +225,7 @@
   async function loadSettings() {
     settingWhatsapp.value = window.CONFIG.whatsappNumber || "";
     settingTemplatePath.value = window.CONFIG.templatePath || "assets/voucher-template.png";
+    settingWhatsappMessage.value = window.CONFIG.whatsappMessageTemplate || "";
     templatePreview.src = settingTemplatePath.value;
 
     try {
@@ -231,6 +233,7 @@
       Object.assign(window.CONFIG, settings);
       settingWhatsapp.value = window.CONFIG.whatsappNumber || "";
       settingTemplatePath.value = window.CONFIG.templatePath || "assets/voucher-template.png";
+      settingWhatsappMessage.value = window.CONFIG.whatsappMessageTemplate || "";
       templatePreview.src = settingTemplatePath.value;
       clearMessage(settingsMessage);
     } catch (error) {
@@ -418,6 +421,7 @@
     const whatsappNumber = window.HPVoucherSupabase.normalizeWhatsApp(settingWhatsapp.value);
     const selectedFile = settingTemplateFile.files[0];
     let templatePath = settingTemplatePath.value.trim();
+    const whatsappMessageTemplate = settingWhatsappMessage.value.trim();
 
     if (!window.HPVoucherSupabase.isValidIndonesianWhatsApp(whatsappNumber)) {
       setMessage(settingsMessage, "Nomor WhatsApp belum valid. Contoh: 6285348773757.");
@@ -431,6 +435,12 @@
       return;
     }
 
+    if (!whatsappMessageTemplate) {
+      setMessage(settingsMessage, "Pesan WhatsApp wajib diisi.");
+      settingsMessage.classList.add("error");
+      return;
+    }
+
     saveSettingsButton.disabled = true;
     try {
       if (selectedFile) {
@@ -440,10 +450,12 @@
       saveSettingsButton.textContent = "Menyimpan...";
       await window.HPVoucherSupabase.saveCampaignSettings({
         whatsappNumber,
-        templatePath
+        templatePath,
+        whatsappMessageTemplate
       });
       window.CONFIG.whatsappNumber = whatsappNumber;
       window.CONFIG.templatePath = templatePath;
+      window.CONFIG.whatsappMessageTemplate = whatsappMessageTemplate;
       settingWhatsapp.value = whatsappNumber;
       settingTemplatePath.value = templatePath;
       settingTemplateFile.value = "";

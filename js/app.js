@@ -117,18 +117,14 @@
   function buildWhatsAppUrl() {
     const claim = state.currentClaim;
     const name = claim.customer_name || document.getElementById("customerName").value.trim();
-    const text = [
-      "Halo Happy Puppy Citos",
-      "",
-      "Saya sudah claim Voucher GRATIS KARAOKE 1 JAM",
-      "",
-      `Nama: ${name}`,
-      `Kode Voucher: ${claim.voucher_code}`,
-      "",
-      "Saya akan melampirkan foto voucher yang baru saja tersimpan di HP saya.",
-      "",
-      "Saya ingin menggunakan voucher ini untuk karaoke di Happy Puppy Citos."
-    ].join("\n");
+    const claimDate = claim.claim_day || claim.claimDate;
+    const expiryDate = claim.expires_at || claim.expiryDate || window.HPVoucherCanvas.calculateExpiryDate(claimDate);
+    const template = window.CONFIG.whatsappMessageTemplate || "";
+    const text = template
+      .replaceAll("{nama}", name)
+      .replaceAll("{kode}", claim.voucher_code || "")
+      .replaceAll("{tanggal_claim}", window.HPVoucherCanvas.formatDateIndonesia(claimDate))
+      .replaceAll("{tanggal_expired}", window.HPVoucherCanvas.formatDateIndonesia(expiryDate));
     return `https://wa.me/${window.CONFIG.whatsappNumber}?text=${encodeURIComponent(text)}`;
   }
 
