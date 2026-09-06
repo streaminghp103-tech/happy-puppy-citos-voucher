@@ -53,7 +53,31 @@
       .join(" / ");
   }
 
+  function customerClaimSummary() {
+    const grouped = new Map();
+    filteredClaims().forEach((row) => {
+      const key = row.whatsapp || row.customer_name;
+      const existing = grouped.get(key) || {
+        customer_name: row.customer_name,
+        whatsapp: row.whatsapp,
+        count: 0,
+        firstClaim: row.claim_day,
+        lastClaim: row.claim_day,
+        voucherCodes: []
+      };
+
+      existing.count += 1;
+      existing.firstClaim = row.claim_day < existing.firstClaim ? row.claim_day : existing.firstClaim;
+      existing.lastClaim = row.claim_day > existing.lastClaim ? row.claim_day : existing.lastClaim;
+      existing.voucherCodes.push(row.voucher_code);
+      grouped.set(key, existing);
+    });
+
+    return Array.from(grouped.values()).sort((a, b) => b.count - a.count || a.customer_name.localeCompare(b.customer_name));
+  }
+
   function filteredClaims() {
+    if (!hasDateFilter()) return [];
     const query = searchInput.value.trim().toLowerCase();
     const startDate = startDateFilter.value;
     const endDate = endDateFilter.value;
@@ -64,6 +88,10 @@
       const matchesQuery = !query || haystack.includes(query);
       return matchesStart && matchesEnd && matchesQuery;
     });
+  }
+
+  function hasDateFilter() {
+    return Boolean(startDateFilter.value || endDateFilter.value);
   }
 
   function getTodayWita() {
@@ -125,7 +153,7 @@
           <td>${escapeHtml(campaignLabel(row) || "-")}</td>
         </tr>
       `).join("")
-      : `<tr><td colspan="6" class="empty-row">Belum ada data yang cocok.</td></tr>`;
+      : `<tr><td colspan="6" class="empty-row">${hasDateFilter() ? "Belum ada data yang cocok." : "Pilih tanggal Dari atau Sampai untuk menampilkan data."}</td></tr>`;
   }
 
   function escapeHtml(value) {
@@ -151,6 +179,14 @@
 
   async function loadClaims() {
     clearMessage(adminError);
+    if (!hasDateFilter()) {
+      claims = [];
+      visits = [];
+      updateMetrics();
+      renderTable();
+      return;
+    }
+
     let claimsQuery = client
       .from("voucher_claims")
       .select("customer_name, whatsapp, voucher_code, claim_day, expires_at, utm_source, utm_medium, utm_campaign, utm_content, created_at")
@@ -281,6 +317,15 @@
       campaignLabel(row)
     ]);
     const metrics = getMetrics();
+    const customerSummaryHeaders = ["Nama", "WhatsApp", "Jumlah Claim", "Claim Pertama", "Claim Terakhir", "Kode Voucher"];
+    const customerSummaryRows = customerClaimSummary().map((row) => [
+      row.customer_name,
+      row.whatsapp,
+      row.count,
+      window.HPVoucherCanvas.formatDateIndonesia(row.firstClaim),
+      window.HPVoucherCanvas.formatDateIndonesia(row.lastClaim),
+      row.voucherCodes.join(", ")
+    ]);
     const unclaimedVisitHeaders = ["Visitor ID", "Tanggal Masuk", "Halaman", "Campaign", "Pertama Masuk", "Terakhir Terlihat"];
     const unclaimedVisitRows = visits
       .filter((row) => !row.claimed_at)
@@ -315,6 +360,12 @@
         return `<tr>${row.map((cell) => `<${tag}>${escapeHtml(cell)}</${tag}>`).join("")}</tr>`;
       })
       .join("");
+    const customerSummaryTableRows = [customerSummaryHeaders, ...customerSummaryRows]
+      .map((row, index) => {
+        const tag = index === 0 ? "th" : "td";
+        return `<tr>${row.map((cell) => `<${tag}>${escapeHtml(cell)}</${tag}>`).join("")}</tr>`;
+      })
+      .join("");
     const unclaimedTableRows = [unclaimedVisitHeaders, ...unclaimedVisitRows]
       .map((row, index) => {
         const tag = index === 0 ? "th" : "td";
@@ -340,6 +391,9 @@
           <br>
           <h2>Data Claim Voucher</h2>
           <table>${tableRows}</table>
+          <br>
+          <h2>Jumlah Claim per Customer</h2>
+          <table>${customerSummaryTableRows}</table>
           <br>
           <h2>Pengunjung Masuk Belum Claim</h2>
           <table>${unclaimedTableRows}</table>
