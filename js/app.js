@@ -20,8 +20,6 @@
   const fallbackClaimDate = document.getElementById("fallbackClaimDate");
   const fallbackExpiryDate = document.getElementById("fallbackExpiryDate");
   const saveAndWhatsappButton = document.getElementById("saveAndWhatsappButton");
-  const downloadButton = document.getElementById("downloadButton");
-  const whatsappButton = document.getElementById("whatsappButton");
 
   function show(element) {
     element.classList.remove("hidden");
@@ -138,8 +136,7 @@
   async function downloadVoucher() {
     if (!state.currentClaim) return;
     if (!state.canvasReady) {
-      setError("Gambar voucher belum siap. Data voucher tetap tampil di layar.");
-      return;
+      throw new Error("Gambar voucher belum siap. Coba lagi sebentar.");
     }
     await window.HPVoucherCanvas.downloadCanvas(voucherCanvas, state.currentClaim.voucher_code);
   }
@@ -169,6 +166,11 @@
     }
 
     trackVoucherClaimed(claim);
+  }
+
+  function setActionButtonLoading(isLoading) {
+    saveAndWhatsappButton.disabled = isLoading;
+    saveAndWhatsappButton.textContent = isLoading ? "MENYIMPAN VOUCHER..." : "SIMPAN VOUCHER & BUKA WHATSAPP";
   }
 
   function validateForm(customerName, whatsapp) {
@@ -223,24 +225,18 @@
   });
 
   saveAndWhatsappButton.addEventListener("click", async () => {
+    clearError();
+    setActionButtonLoading(true);
     try {
       await downloadVoucher();
-    } catch (error) {
-      setError("Download otomatis gagal. Tekan lama gambar voucher lalu simpan manual, kemudian buka WhatsApp.");
-    } finally {
       setTimeout(openWhatsApp, 400);
-    }
-  });
-
-  downloadButton.addEventListener("click", async () => {
-    try {
-      await downloadVoucher();
     } catch (error) {
-      setError(error.message || "Download gagal. Coba tekan lama gambar voucher lalu simpan manual.");
+      setError(error.message || "Download voucher gagal. Coba tekan tombol lagi. Kalau masih gagal, tekan lama gambar voucher lalu simpan manual.");
+    } finally {
+      setActionButtonLoading(false);
     }
   });
 
-  whatsappButton.addEventListener("click", openWhatsApp);
   closeResultButton.addEventListener("click", closeResultModal);
   resultPanel.addEventListener("click", (event) => {
     if (event.target === resultPanel) closeResultModal();
