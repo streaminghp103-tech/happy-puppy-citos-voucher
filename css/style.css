@@ -1647,3 +1647,23 @@ body.campaign-page .voucher-fallback {
     align-items: end;
   }
 }
+
+@media (min-width: 720px) {
+  .admin-body .metrics-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1080px) {
+  .admin-body .metrics-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .admin-body .metric-card {
+    padding: 14px;
+  }
+
+  .admin-body .metric-card strong {
+    font-size: 1.7rem;
+  }
+}
