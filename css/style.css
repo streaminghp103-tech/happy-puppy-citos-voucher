@@ -39,7 +39,8 @@ body.modal-open {
 }
 
 button,
-input {
+input,
+textarea {
   font: inherit;
 }
 
@@ -172,6 +173,25 @@ input {
 }
 
 input:focus {
+  border-color: var(--accent);
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(232, 23, 47, 0.13);
+}
+
+textarea {
+  width: 100%;
+  min-height: 150px;
+  padding: 13px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-soft);
+  color: var(--ink);
+  outline: none;
+  resize: vertical;
+  transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+textarea:focus {
   border-color: var(--accent);
   background: #ffffff;
   box-shadow: 0 0 0 4px rgba(232, 23, 47, 0.13);
@@ -1607,6 +1627,17 @@ body.campaign-page .voucher-fallback {
 .settings-form > div {
   display: grid;
   gap: 6px;
+}
+
+.settings-wide {
+  grid-column: 1 / -1;
+}
+
+.field-help {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.35;
 }
 
 .settings-form input[readonly] {
