@@ -75,7 +75,7 @@
     }).format(new Date());
   }
 
-  function updateMetrics() {
+  function getMetrics() {
     const today = getTodayWita();
     const uniqueNumbers = new Set(claims.map((row) => row.whatsapp));
     const repeatNumbers = new Set(
@@ -83,12 +83,33 @@
         .map((row) => row.whatsapp)
         .filter((number, index, list) => list.indexOf(number) !== index)
     );
+    const totalVisitors = visits.length;
+    const totalClaims = claims.length;
+    const claimedVisitors = visits.filter((row) => row.claimed_at).length;
+    const unclaimedVisitors = visits.filter((row) => !row.claimed_at).length;
+    const conversionRate = totalVisitors ? Math.round((claimedVisitors / totalVisitors) * 1000) / 10 : 0;
 
-    document.getElementById("totalClaims").textContent = claims.length;
-    document.getElementById("todayClaims").textContent = claims.filter((row) => row.claim_day === today).length;
-    document.getElementById("uniqueCustomers").textContent = uniqueNumbers.size;
-    document.getElementById("repeatCustomers").textContent = repeatNumbers.size;
-    document.getElementById("unclaimedVisitors").textContent = visits.filter((row) => !row.claimed_at).length;
+    return {
+      totalVisitors,
+      totalClaims,
+      claimedVisitors,
+      todayClaims: claims.filter((row) => row.claim_day === today).length,
+      uniqueCustomers: uniqueNumbers.size,
+      repeatCustomers: repeatNumbers.size,
+      unclaimedVisitors,
+      conversionRate
+    };
+  }
+
+  function updateMetrics() {
+    const metrics = getMetrics();
+
+    document.getElementById("totalClaims").textContent = metrics.totalClaims;
+    document.getElementById("todayClaims").textContent = metrics.todayClaims;
+    document.getElementById("uniqueCustomers").textContent = metrics.uniqueCustomers;
+    document.getElementById("repeatCustomers").textContent = metrics.repeatCustomers;
+    document.getElementById("unclaimedVisitors").textContent = metrics.unclaimedVisitors;
+    document.getElementById("conversionRate").textContent = `${metrics.conversionRate}%`;
   }
 
   function renderTable() {
@@ -116,6 +137,18 @@
       .replace(/'/g, "&#039;");
   }
 
+  function formatDateTime(value) {
+    if (!value) return "-";
+    return new Intl.DateTimeFormat("id-ID", {
+      timeZone: window.CONFIG.timezone,
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    }).format(new Date(value));
+  }
+
   async function loadClaims() {
     clearMessage(adminError);
     let claimsQuery = client
@@ -124,7 +157,7 @@
       .order("created_at", { ascending: false });
     let visitsQuery = client
       .from("page_visits")
-      .select("visitor_id, visit_day, claimed_at, created_at")
+      .select("visitor_id, visit_day, page_path, claimed_at, utm_source, utm_medium, utm_campaign, utm_content, created_at, last_seen_at")
       .order("created_at", { ascending: false });
 
     if (startDateFilter.value) {
@@ -247,11 +280,42 @@
       window.HPVoucherCanvas.formatDateIndonesia(row.expires_at),
       campaignLabel(row)
     ]);
+    const metrics = getMetrics();
+    const unclaimedVisitHeaders = ["Visitor ID", "Tanggal Masuk", "Halaman", "Campaign", "Pertama Masuk", "Terakhir Terlihat"];
+    const unclaimedVisitRows = visits
+      .filter((row) => !row.claimed_at)
+      .map((row) => [
+        row.visitor_id,
+        window.HPVoucherCanvas.formatDateIndonesia(row.visit_day),
+        row.page_path || "-",
+        campaignLabel(row) || "-",
+        formatDateTime(row.created_at),
+        formatDateTime(row.last_seen_at)
+      ]);
 
     const periodText = startDateFilter.value || endDateFilter.value
       ? `${startDateFilter.value || "awal"} sampai ${endDateFilter.value || "akhir"}`
       : "Semua data";
+    const summaryRows = [
+      ["Periode", periodText],
+      ["Total pengunjung masuk", metrics.totalVisitors],
+      ["Pengunjung yang claim", metrics.claimedVisitors],
+      ["Total claim voucher", metrics.totalClaims],
+      ["Masuk belum claim", metrics.unclaimedVisitors],
+      ["Conversion rate", `${metrics.conversionRate}%`],
+      ["Unique customer", metrics.uniqueCustomers],
+      ["Repeat customer", metrics.repeatCustomers]
+    ];
+    const summaryTableRows = summaryRows
+      .map((row) => `<tr><th>${escapeHtml(row[0])}</th><td>${escapeHtml(row[1])}</td></tr>`)
+      .join("");
     const tableRows = [headers, ...rows]
+      .map((row, index) => {
+        const tag = index === 0 ? "th" : "td";
+        return `<tr>${row.map((cell) => `<${tag}>${escapeHtml(cell)}</${tag}>`).join("")}</tr>`;
+      })
+      .join("");
+    const unclaimedTableRows = [unclaimedVisitHeaders, ...unclaimedVisitRows]
       .map((row, index) => {
         const tag = index === 0 ? "th" : "td";
         return `<tr>${row.map((cell) => `<${tag}>${escapeHtml(cell)}</${tag}>`).join("")}</tr>`;
@@ -266,12 +330,19 @@
             th { background: #f4b63f; color: #1c1a17; font-weight: bold; }
             th, td { border: 1px solid #333333; padding: 8px 10px; mso-number-format: "\\@"; }
             h2, p { font-family: Arial, sans-serif; }
+            .summary th { text-align: left; width: 220px; }
           </style>
         </head>
         <body>
           <h2>Voucher Happy Puppy Citos</h2>
           <p>Periode: ${escapeHtml(periodText)}</p>
+          <table class="summary">${summaryTableRows}</table>
+          <br>
+          <h2>Data Claim Voucher</h2>
           <table>${tableRows}</table>
+          <br>
+          <h2>Pengunjung Masuk Belum Claim</h2>
+          <table>${unclaimedTableRows}</table>
         </body>
       </html>
     `;
