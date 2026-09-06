@@ -1,5 +1,6 @@
 (function () {
   let claims = [];
+  let visits = [];
   let client = null;
 
   const loginPanel = document.getElementById("loginPanel");
@@ -87,6 +88,7 @@
     document.getElementById("todayClaims").textContent = claims.filter((row) => row.claim_day === today).length;
     document.getElementById("uniqueCustomers").textContent = uniqueNumbers.size;
     document.getElementById("repeatCustomers").textContent = repeatNumbers.size;
+    document.getElementById("unclaimedVisitors").textContent = visits.filter((row) => !row.claimed_at).length;
   }
 
   function renderTable() {
@@ -116,23 +118,36 @@
 
   async function loadClaims() {
     clearMessage(adminError);
-    let query = client
+    let claimsQuery = client
       .from("voucher_claims")
       .select("customer_name, whatsapp, voucher_code, claim_day, expires_at, utm_source, utm_medium, utm_campaign, utm_content, created_at")
       .order("created_at", { ascending: false });
+    let visitsQuery = client
+      .from("page_visits")
+      .select("visitor_id, visit_day, claimed_at, created_at")
+      .order("created_at", { ascending: false });
 
     if (startDateFilter.value) {
-      query = query.gte("claim_day", startDateFilter.value);
+      claimsQuery = claimsQuery.gte("claim_day", startDateFilter.value);
+      visitsQuery = visitsQuery.gte("visit_day", startDateFilter.value);
     }
 
     if (endDateFilter.value) {
-      query = query.lte("claim_day", endDateFilter.value);
+      claimsQuery = claimsQuery.lte("claim_day", endDateFilter.value);
+      visitsQuery = visitsQuery.lte("visit_day", endDateFilter.value);
     }
 
-    const { data, error } = await query.limit(window.CONFIG.adminPageSize || 1000);
+    const [{ data: claimData, error: claimError }, { data: visitData, error: visitError }] = await Promise.all([
+      claimsQuery.limit(window.CONFIG.adminPageSize || 1000),
+      visitsQuery.limit(window.CONFIG.adminPageSize || 1000)
+    ]);
 
-    if (error) throw error;
-    claims = data || [];
+    if (claimError) throw claimError;
+    claims = claimData || [];
+    visits = visitError ? [] : (visitData || []);
+    if (visitError) {
+      console.warn("Data kunjungan halaman belum bisa dimuat:", visitError.message);
+    }
     updateMetrics();
     renderTable();
   }

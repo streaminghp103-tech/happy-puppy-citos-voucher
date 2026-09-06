@@ -53,6 +53,40 @@
     return Array.isArray(data) ? data[0] : data;
   }
 
+  async function recordPageVisit(payload) {
+    const client = createClient();
+    if (!client) return null;
+
+    const { data, error } = await client.rpc("record_page_visit", {
+      p_visitor_id: payload.visitorId,
+      p_page_path: payload.pagePath,
+      p_utm_source: payload.utmSource || null,
+      p_utm_medium: payload.utmMedium || null,
+      p_utm_campaign: payload.utmCampaign || window.CONFIG.campaignName,
+      p_utm_content: payload.utmContent || null
+    });
+
+    if (error) {
+      console.warn("Kunjungan halaman belum bisa dicatat:", error.message);
+      return null;
+    }
+    return data;
+  }
+
+  async function markPageVisitClaimed(payload) {
+    const client = createClient();
+    if (!client) return;
+
+    const { error } = await client.rpc("mark_page_visit_claimed", {
+      p_visitor_id: payload.visitorId,
+      p_claim_id: payload.claimId || null
+    });
+
+    if (error) {
+      console.warn("Status kunjungan belum bisa diperbarui:", error.message);
+    }
+  }
+
   async function loadCampaignSettings() {
     const client = createClient();
     if (!client) return {};
@@ -139,6 +173,8 @@
     normalizeWhatsApp,
     isValidIndonesianWhatsApp,
     claimVoucher,
+    recordPageVisit,
+    markPageVisitClaimed,
     loadCampaignSettings,
     saveCampaignSettings,
     uploadVoucherTemplate

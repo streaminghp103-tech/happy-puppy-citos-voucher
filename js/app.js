@@ -2,7 +2,8 @@
   const state = {
     isSubmitting: false,
     currentClaim: null,
-    canvasReady: false
+    canvasReady: false,
+    visitorId: ""
   };
 
   const form = document.getElementById("claimForm");
@@ -61,6 +62,21 @@
     };
   }
 
+  function getVisitorId() {
+    const storageKey = "hp_citos_visitor_id";
+    try {
+      const existing = localStorage.getItem(storageKey);
+      if (existing) return existing;
+      const id = window.crypto && window.crypto.randomUUID
+        ? window.crypto.randomUUID()
+        : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+      localStorage.setItem(storageKey, id);
+      return id;
+    } catch (error) {
+      return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    }
+  }
+
   function initMetaPixel() {
     const id = window.CONFIG.metaPixelId;
     if (!id) return;
@@ -78,6 +94,15 @@
   async function initCampaignSettings() {
     const settings = await window.HPVoucherSupabase.loadCampaignSettings();
     Object.assign(window.CONFIG, settings);
+  }
+
+  async function initPageVisitTracking() {
+    state.visitorId = getVisitorId();
+    await window.HPVoucherSupabase.recordPageVisit({
+      visitorId: state.visitorId,
+      pagePath: window.location.pathname,
+      ...getUtmParams()
+    });
   }
 
   function trackVoucherClaimed(claim) {
@@ -187,6 +212,10 @@
         }),
         new Promise((_, reject) => setTimeout(() => reject(new Error("Koneksi lambat. Coba lagi sebentar.")), 20000))
       ]);
+      window.HPVoucherSupabase.markPageVisitClaimed({
+        visitorId: state.visitorId || getVisitorId(),
+        claimId: claim.id
+      });
       await showVoucher(claim);
     } catch (error) {
       setError(error.message || "Voucher belum bisa dibuat. Coba lagi sebentar.");
@@ -228,5 +257,8 @@
 
   initCampaignSettings()
     .catch((error) => console.warn("Pengaturan campaign gagal dimuat:", error.message))
-    .finally(initMetaPixel);
+    .finally(() => {
+      initMetaPixel();
+      initPageVisitTracking();
+    });
 })();
