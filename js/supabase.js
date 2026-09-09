@@ -94,7 +94,15 @@
     const { data, error } = await client
       .from("campaign_settings")
       .select("setting_key, setting_value")
-      .in("setting_key", ["whatsappNumber", "templatePath", "whatsappMessageTemplate"]);
+      .in("setting_key", [
+        "whatsappNumber",
+        "voucherPrefix",
+        "expiryMode",
+        "expiryDays",
+        "fixedExpiryDate",
+        "templatePath",
+        "whatsappMessageTemplate"
+      ]);
 
     if (error) {
       console.warn("Pengaturan campaign belum tersedia:", error.message);
@@ -114,7 +122,7 @@
     }
 
     const rows = Object.entries(settings)
-      .filter(([, value]) => String(value || "").trim())
+      .filter(([, value]) => value !== undefined && value !== null)
       .map(([setting_key, setting_value]) => ({
         setting_key,
         setting_value: String(setting_value).trim()

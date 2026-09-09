@@ -16,6 +16,10 @@
   const endDateFilter = document.getElementById("endDateFilter");
   const settingsForm = document.getElementById("settingsForm");
   const settingWhatsapp = document.getElementById("settingWhatsapp");
+  const settingVoucherPrefix = document.getElementById("settingVoucherPrefix");
+  const settingExpiryMode = document.getElementById("settingExpiryMode");
+  const settingExpiryDays = document.getElementById("settingExpiryDays");
+  const settingFixedExpiryDate = document.getElementById("settingFixedExpiryDate");
   const settingTemplatePath = document.getElementById("settingTemplatePath");
   const settingTemplateFile = document.getElementById("settingTemplateFile");
   const settingWhatsappMessage = document.getElementById("settingWhatsappMessage");
@@ -93,6 +97,43 @@
 
   function hasDateFilter() {
     return Boolean(startDateFilter.value || endDateFilter.value);
+  }
+
+  function normalizeConfigSettings() {
+    const expiryDays = Number(window.CONFIG.expiryDays);
+    window.CONFIG.voucherPrefix = normalizeVoucherPrefix(window.CONFIG.voucherPrefix || "HP103-FR");
+    window.CONFIG.expiryMode = window.CONFIG.expiryMode === "fixed_date" ? "fixed_date" : "days";
+    window.CONFIG.expiryDays = Number.isFinite(expiryDays) ? Math.max(1, Math.min(expiryDays, 365)) : 30;
+    window.CONFIG.fixedExpiryDate = window.CONFIG.fixedExpiryDate || "";
+  }
+
+  function normalizeVoucherPrefix(value) {
+    return String(value || "")
+      .trim()
+      .toUpperCase()
+      .replace(/[^A-Z0-9-]/g, "")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "")
+      .slice(0, 24);
+  }
+
+  function syncExpiryFields() {
+    const isFixedDate = settingExpiryMode.value === "fixed_date";
+    settingExpiryDays.disabled = isFixedDate;
+    settingFixedExpiryDate.disabled = !isFixedDate;
+  }
+
+  function fillSettingsForm() {
+    normalizeConfigSettings();
+    settingWhatsapp.value = window.CONFIG.whatsappNumber || "";
+    settingVoucherPrefix.value = window.CONFIG.voucherPrefix || "HP103-FR";
+    settingExpiryMode.value = window.CONFIG.expiryMode;
+    settingExpiryDays.value = window.CONFIG.expiryDays;
+    settingFixedExpiryDate.value = window.CONFIG.fixedExpiryDate || "";
+    settingTemplatePath.value = window.CONFIG.templatePath || "assets/voucher-template.png";
+    settingWhatsappMessage.value = window.CONFIG.whatsappMessageTemplate || "";
+    templatePreview.src = settingTemplatePath.value;
+    syncExpiryFields();
   }
 
   function getTodayWita() {
@@ -223,18 +264,12 @@
   }
 
   async function loadSettings() {
-    settingWhatsapp.value = window.CONFIG.whatsappNumber || "";
-    settingTemplatePath.value = window.CONFIG.templatePath || "assets/voucher-template.png";
-    settingWhatsappMessage.value = window.CONFIG.whatsappMessageTemplate || "";
-    templatePreview.src = settingTemplatePath.value;
+    fillSettingsForm();
 
     try {
       const settings = await window.HPVoucherSupabase.loadCampaignSettings();
       Object.assign(window.CONFIG, settings);
-      settingWhatsapp.value = window.CONFIG.whatsappNumber || "";
-      settingTemplatePath.value = window.CONFIG.templatePath || "assets/voucher-template.png";
-      settingWhatsappMessage.value = window.CONFIG.whatsappMessageTemplate || "";
-      templatePreview.src = settingTemplatePath.value;
+      fillSettingsForm();
       clearMessage(settingsMessage);
     } catch (error) {
       settingsMessage.classList.add("error");
@@ -419,12 +454,23 @@
     clearMessage(settingsMessage);
 
     const whatsappNumber = window.HPVoucherSupabase.normalizeWhatsApp(settingWhatsapp.value);
+    const voucherPrefix = normalizeVoucherPrefix(settingVoucherPrefix.value);
     const selectedFile = settingTemplateFile.files[0];
     let templatePath = settingTemplatePath.value.trim();
     const whatsappMessageTemplate = settingWhatsappMessage.value.trim();
+    const expiryMode = settingExpiryMode.value === "fixed_date" ? "fixed_date" : "days";
+    const rawExpiryDays = Number(settingExpiryDays.value || 30);
+    const expiryDays = Number.isFinite(rawExpiryDays) ? Math.max(1, Math.min(rawExpiryDays, 365)) : 30;
+    const fixedExpiryDate = settingFixedExpiryDate.value.trim();
 
     if (!window.HPVoucherSupabase.isValidIndonesianWhatsApp(whatsappNumber)) {
       setMessage(settingsMessage, "Nomor WhatsApp belum valid. Contoh: 6285348773757.");
+      settingsMessage.classList.add("error");
+      return;
+    }
+
+    if (!voucherPrefix) {
+      setMessage(settingsMessage, "Awalan kode voucher wajib diisi. Contoh: HP103-FR.");
       settingsMessage.classList.add("error");
       return;
     }
@@ -441,6 +487,12 @@
       return;
     }
 
+    if (expiryMode === "fixed_date" && !fixedExpiryDate) {
+      setMessage(settingsMessage, "Tanggal expired tetap wajib dipilih.");
+      settingsMessage.classList.add("error");
+      return;
+    }
+
     saveSettingsButton.disabled = true;
     try {
       if (selectedFile) {
@@ -450,14 +502,21 @@
       saveSettingsButton.textContent = "Menyimpan...";
       await window.HPVoucherSupabase.saveCampaignSettings({
         whatsappNumber,
+        voucherPrefix,
+        expiryMode,
+        expiryDays,
+        fixedExpiryDate: expiryMode === "fixed_date" ? fixedExpiryDate : "",
         templatePath,
         whatsappMessageTemplate
       });
       window.CONFIG.whatsappNumber = whatsappNumber;
+      window.CONFIG.voucherPrefix = voucherPrefix;
+      window.CONFIG.expiryMode = expiryMode;
+      window.CONFIG.expiryDays = expiryDays;
+      window.CONFIG.fixedExpiryDate = expiryMode === "fixed_date" ? fixedExpiryDate : "";
       window.CONFIG.templatePath = templatePath;
       window.CONFIG.whatsappMessageTemplate = whatsappMessageTemplate;
-      settingWhatsapp.value = whatsappNumber;
-      settingTemplatePath.value = templatePath;
+      fillSettingsForm();
       settingTemplateFile.value = "";
       templatePreview.src = templatePath;
       settingsMessage.classList.remove("error");
@@ -471,6 +530,7 @@
     }
   });
 
+  settingExpiryMode.addEventListener("change", syncExpiryFields);
   settingTemplateFile.addEventListener("change", () => {
     const selectedFile = settingTemplateFile.files[0];
     if (!selectedFile) {

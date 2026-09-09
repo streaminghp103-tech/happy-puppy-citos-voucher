@@ -92,6 +92,17 @@
   async function initCampaignSettings() {
     const settings = await window.HPVoucherSupabase.loadCampaignSettings();
     Object.assign(window.CONFIG, settings);
+    const expiryDays = Number(window.CONFIG.expiryDays);
+    window.CONFIG.voucherPrefix = String(window.CONFIG.voucherPrefix || "HP103-FR")
+      .trim()
+      .toUpperCase()
+      .replace(/[^A-Z0-9-]/g, "")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "")
+      .slice(0, 24) || "HP103-FR";
+    window.CONFIG.expiryMode = window.CONFIG.expiryMode === "fixed_date" ? "fixed_date" : "days";
+    window.CONFIG.expiryDays = Number.isFinite(expiryDays) ? Math.max(1, Math.min(expiryDays, 365)) : 30;
+    window.CONFIG.fixedExpiryDate = window.CONFIG.fixedExpiryDate || "";
   }
 
   async function initPageVisitTracking() {
