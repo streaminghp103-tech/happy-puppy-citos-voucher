@@ -1419,31 +1419,12 @@ body.campaign-page .primary-button {
 }
 
 body.campaign-page #claimButton {
-  animation: claimButtonPulse 2.7s ease-in-out infinite;
-}
-
-body.campaign-page #claimButton::before {
-  content: "";
-  position: absolute;
-  inset: 1px;
-  z-index: 1;
-  pointer-events: none;
-  border-radius: inherit;
-  background: linear-gradient(110deg, transparent 0 28%, rgba(255, 255, 255, 0.52) 42%, transparent 56%);
-  background-size: 220% 100%;
-  animation: claimButtonShine 2.2s ease-in-out infinite;
-}
-
-body.campaign-page #claimButton::after {
-  content: "";
-  position: absolute;
-  inset: -8px;
-  z-index: -2;
-  border-radius: inherit;
-  background: rgba(255, 28, 133, 0.45);
-  filter: blur(18px);
-  opacity: 0.75;
-  animation: claimButtonGlow 2.7s ease-in-out infinite;
+  pointer-events: auto;
+  background:
+    linear-gradient(110deg, transparent 0 30%, rgba(255, 255, 255, 0.5) 44%, transparent 58%),
+    linear-gradient(135deg, #ff0f62, #ff1ca8);
+  background-size: 230% 100%, 100% 100%;
+  animation: claimButtonShine 2.2s ease-in-out infinite, claimButtonPulse 2.7s ease-in-out infinite;
 }
 
 body.campaign-page #claimButton:hover {
@@ -1458,19 +1439,13 @@ body.campaign-page #claimButton:disabled {
   animation: none;
 }
 
-body.campaign-page #claimButton:disabled::before,
-body.campaign-page #claimButton:disabled::after {
-  animation: none;
-  opacity: 0.35;
-}
-
 @keyframes claimButtonShine {
   0% {
-    background-position: 155% 0;
+    background-position: 155% 0, 0 0;
   }
   46%,
   100% {
-    background-position: -95% 0;
+    background-position: -95% 0, 0 0;
   }
 }
 
@@ -1484,22 +1459,8 @@ body.campaign-page #claimButton:disabled::after {
   }
 }
 
-@keyframes claimButtonGlow {
-  0%,
-  100% {
-    opacity: 0.42;
-    transform: scale(0.96);
-  }
-  50% {
-    opacity: 0.78;
-    transform: scale(1.02);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  body.campaign-page #claimButton,
-  body.campaign-page #claimButton::before,
-  body.campaign-page #claimButton::after {
+  body.campaign-page #claimButton {
     animation: none;
   }
 }

@@ -26,6 +26,7 @@
   function loadTemplate() {
     return new Promise((resolve, reject) => {
       const image = new Image();
+      image.crossOrigin = "anonymous";
       image.onload = () => resolve(image);
       image.onerror = () => reject(new Error("Template voucher gagal dimuat. Pastikan assets/voucher-template.png sudah ada."));
       image.src = window.CONFIG.templatePath;
