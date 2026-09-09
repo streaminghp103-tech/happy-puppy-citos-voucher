@@ -42,11 +42,30 @@
 
         <section class="admin-card settings-card">
           <h2>Pengaturan Campaign</h2>
-          <p class="muted">Ubah nomor WhatsApp tujuan dan gambar template voucher yang dipakai saat customer claim.</p>
+          <p class="muted">Ubah nomor WhatsApp tujuan, masa berlaku, pesan WhatsApp, dan gambar template voucher.</p>
           <form id="settingsForm" class="settings-form" novalidate>
             <div>
               <label for="settingWhatsapp">Nomor WhatsApp Tujuan</label>
               <input id="settingWhatsapp" type="tel" inputmode="tel" placeholder="6285348773757" required>
+            </div>
+            <div>
+              <label for="settingVoucherPrefix">Awalan Kode Voucher</label>
+              <input id="settingVoucherPrefix" type="text" placeholder="HP103-FR" maxlength="24" required>
+            </div>
+            <div>
+              <label for="settingExpiryMode">Masa Berlaku Voucher</label>
+              <select id="settingExpiryMode">
+                <option value="days">Berlaku beberapa hari</option>
+                <option value="fixed_date">Tanggal expired tetap</option>
+              </select>
+            </div>
+            <div>
+              <label for="settingExpiryDays">Jumlah Hari</label>
+              <input id="settingExpiryDays" type="number" min="1" max="365" step="1" placeholder="30">
+            </div>
+            <div>
+              <label for="settingFixedExpiryDate">Tanggal Expired Tetap</label>
+              <input id="settingFixedExpiryDate" type="date">
             </div>
             <div>
               <label for="settingTemplatePath">Gambar Voucher</label>
