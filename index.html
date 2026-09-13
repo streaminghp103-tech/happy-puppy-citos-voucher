@@ -89,7 +89,16 @@
           <div class="action-stack">
             <button id="saveAndWhatsappButton" class="primary-button" type="button">SIMPAN VOUCHER &amp; BUKA WHATSAPP</button>
           </div>
-          <p id="downloadHint" class="fine-print">Tekan tombol sekali. Voucher disimpan dulu, lalu WhatsApp terbuka otomatis.</p>
+          <div id="downloadProgress" class="download-progress hidden" role="status" aria-live="polite">
+            <div class="download-progress-top">
+              <span id="downloadProgressText">Menyimpan voucher...</span>
+              <strong id="downloadProgressPercent">0%</strong>
+            </div>
+            <div class="download-progress-track">
+              <span id="downloadProgressBar"></span>
+            </div>
+          </div>
+          <p id="downloadHint" class="fine-print">Jika voucher tidak tersimpan di galeri atau folder Download, screenshot voucher ini lalu kirim ke WhatsApp.</p>
         </div>
       </section>
     </main>
