@@ -100,6 +100,10 @@
         "expiryMode",
         "expiryDays",
         "fixedExpiryDate",
+        "quotaEnabled",
+        "quotaStartDate",
+        "quotaEndDate",
+        "quotaLimit",
         "templatePath",
         "whatsappMessageTemplate"
       ]);

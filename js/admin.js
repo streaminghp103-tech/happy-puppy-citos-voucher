@@ -20,6 +20,10 @@
   const settingExpiryMode = document.getElementById("settingExpiryMode");
   const settingExpiryDays = document.getElementById("settingExpiryDays");
   const settingFixedExpiryDate = document.getElementById("settingFixedExpiryDate");
+  const settingQuotaEnabled = document.getElementById("settingQuotaEnabled");
+  const settingQuotaStartDate = document.getElementById("settingQuotaStartDate");
+  const settingQuotaEndDate = document.getElementById("settingQuotaEndDate");
+  const settingQuotaLimit = document.getElementById("settingQuotaLimit");
   const settingTemplatePath = document.getElementById("settingTemplatePath");
   const settingTemplateFile = document.getElementById("settingTemplateFile");
   const settingWhatsappMessage = document.getElementById("settingWhatsappMessage");
@@ -49,6 +53,23 @@
   function requireConfig() {
     if (!window.HPVoucherSupabase.hasSupabaseConfig()) {
       throw new Error("Isi Supabase URL dan anon key di js/config.js terlebih dahulu.");
+    }
+  }
+
+  async function requireAdminAccess() {
+    const { data: userData, error: userError } = await client.auth.getUser();
+    if (userError) throw userError;
+
+    const email = userData.user && userData.user.email ? userData.user.email : "";
+    const { data, error } = await client
+      .from("admin_users")
+      .select("user_id")
+      .eq("user_id", userData.user.id)
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data) {
+      throw new Error(`Akun ${email || "ini"} belum terdaftar sebagai admin. Tambahkan dulu email ini ke tabel admin_users di Supabase.`);
     }
   }
 
@@ -101,10 +122,15 @@
 
   function normalizeConfigSettings() {
     const expiryDays = Number(window.CONFIG.expiryDays);
+    const quotaLimit = Number(window.CONFIG.quotaLimit);
     window.CONFIG.voucherPrefix = normalizeVoucherPrefix(window.CONFIG.voucherPrefix || "HP103-FR");
     window.CONFIG.expiryMode = window.CONFIG.expiryMode === "fixed_date" ? "fixed_date" : "days";
     window.CONFIG.expiryDays = Number.isFinite(expiryDays) ? Math.max(1, Math.min(expiryDays, 365)) : 30;
     window.CONFIG.fixedExpiryDate = window.CONFIG.fixedExpiryDate || "";
+    window.CONFIG.quotaEnabled = String(window.CONFIG.quotaEnabled || "false") === "true";
+    window.CONFIG.quotaStartDate = window.CONFIG.quotaStartDate || "";
+    window.CONFIG.quotaEndDate = window.CONFIG.quotaEndDate || "";
+    window.CONFIG.quotaLimit = Number.isFinite(quotaLimit) ? Math.max(1, Math.min(quotaLimit, 100000)) : 50;
   }
 
   function normalizeVoucherPrefix(value) {
@@ -123,6 +149,13 @@
     settingFixedExpiryDate.disabled = !isFixedDate;
   }
 
+  function syncQuotaFields() {
+    const isQuotaEnabled = settingQuotaEnabled.value === "true";
+    settingQuotaStartDate.disabled = !isQuotaEnabled;
+    settingQuotaEndDate.disabled = !isQuotaEnabled;
+    settingQuotaLimit.disabled = !isQuotaEnabled;
+  }
+
   function fillSettingsForm() {
     normalizeConfigSettings();
     settingWhatsapp.value = window.CONFIG.whatsappNumber || "";
@@ -130,10 +163,15 @@
     settingExpiryMode.value = window.CONFIG.expiryMode;
     settingExpiryDays.value = window.CONFIG.expiryDays;
     settingFixedExpiryDate.value = window.CONFIG.fixedExpiryDate || "";
+    settingQuotaEnabled.value = window.CONFIG.quotaEnabled ? "true" : "false";
+    settingQuotaStartDate.value = window.CONFIG.quotaStartDate || "";
+    settingQuotaEndDate.value = window.CONFIG.quotaEndDate || "";
+    settingQuotaLimit.value = window.CONFIG.quotaLimit || 50;
     settingTemplatePath.value = window.CONFIG.templatePath || "assets/voucher-template.png";
     settingWhatsappMessage.value = window.CONFIG.whatsappMessageTemplate || "";
     templatePreview.src = settingTemplatePath.value;
     syncExpiryFields();
+    syncQuotaFields();
   }
 
   function getTodayWita() {
@@ -283,6 +321,7 @@
       client = window.HPVoucherSupabase.createClient();
       const { data } = await client.auth.getSession();
       if (data.session) {
+        await requireAdminAccess();
         hide(loginPanel);
         show(dashboardPanel);
         show(logoutButton);
@@ -305,6 +344,7 @@
       const password = document.getElementById("adminPassword").value;
       const { error } = await client.auth.signInWithPassword({ email, password });
       if (error) throw error;
+      await requireAdminAccess();
       hide(loginPanel);
       show(dashboardPanel);
       show(logoutButton);
@@ -462,6 +502,11 @@
     const rawExpiryDays = Number(settingExpiryDays.value || 30);
     const expiryDays = Number.isFinite(rawExpiryDays) ? Math.max(1, Math.min(rawExpiryDays, 365)) : 30;
     const fixedExpiryDate = settingFixedExpiryDate.value.trim();
+    const quotaEnabled = settingQuotaEnabled.value === "true";
+    const quotaStartDate = settingQuotaStartDate.value.trim();
+    const quotaEndDate = settingQuotaEndDate.value.trim();
+    const rawQuotaLimit = Number(settingQuotaLimit.value || 50);
+    const quotaLimit = Number.isFinite(rawQuotaLimit) ? Math.max(1, Math.min(rawQuotaLimit, 100000)) : 50;
 
     if (!window.HPVoucherSupabase.isValidIndonesianWhatsApp(whatsappNumber)) {
       setMessage(settingsMessage, "Nomor WhatsApp belum valid. Contoh: 6285348773757.");
@@ -493,6 +538,18 @@
       return;
     }
 
+    if (quotaEnabled && (!quotaStartDate || !quotaEndDate)) {
+      setMessage(settingsMessage, "Tanggal mulai dan selesai kuota wajib dipilih.");
+      settingsMessage.classList.add("error");
+      return;
+    }
+
+    if (quotaEnabled && quotaStartDate > quotaEndDate) {
+      setMessage(settingsMessage, "Tanggal mulai kuota tidak boleh lebih besar dari tanggal selesai.");
+      settingsMessage.classList.add("error");
+      return;
+    }
+
     saveSettingsButton.disabled = true;
     try {
       if (selectedFile) {
@@ -506,6 +563,10 @@
         expiryMode,
         expiryDays,
         fixedExpiryDate: expiryMode === "fixed_date" ? fixedExpiryDate : "",
+        quotaEnabled,
+        quotaStartDate: quotaEnabled ? quotaStartDate : "",
+        quotaEndDate: quotaEnabled ? quotaEndDate : "",
+        quotaLimit,
         templatePath,
         whatsappMessageTemplate
       });
@@ -514,6 +575,10 @@
       window.CONFIG.expiryMode = expiryMode;
       window.CONFIG.expiryDays = expiryDays;
       window.CONFIG.fixedExpiryDate = expiryMode === "fixed_date" ? fixedExpiryDate : "";
+      window.CONFIG.quotaEnabled = quotaEnabled;
+      window.CONFIG.quotaStartDate = quotaEnabled ? quotaStartDate : "";
+      window.CONFIG.quotaEndDate = quotaEnabled ? quotaEndDate : "";
+      window.CONFIG.quotaLimit = quotaLimit;
       window.CONFIG.templatePath = templatePath;
       window.CONFIG.whatsappMessageTemplate = whatsappMessageTemplate;
       fillSettingsForm();
@@ -531,6 +596,7 @@
   });
 
   settingExpiryMode.addEventListener("change", syncExpiryFields);
+  settingQuotaEnabled.addEventListener("change", syncQuotaFields);
   settingTemplateFile.addEventListener("change", () => {
     const selectedFile = settingTemplateFile.files[0];
     if (!selectedFile) {

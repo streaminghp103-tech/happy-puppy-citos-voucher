@@ -97,6 +97,7 @@
     const settings = await window.HPVoucherSupabase.loadCampaignSettings();
     Object.assign(window.CONFIG, settings);
     const expiryDays = Number(window.CONFIG.expiryDays);
+    const quotaLimit = Number(window.CONFIG.quotaLimit);
     window.CONFIG.voucherPrefix = String(window.CONFIG.voucherPrefix || "HP103-FR")
       .trim()
       .toUpperCase()
@@ -107,6 +108,10 @@
     window.CONFIG.expiryMode = window.CONFIG.expiryMode === "fixed_date" ? "fixed_date" : "days";
     window.CONFIG.expiryDays = Number.isFinite(expiryDays) ? Math.max(1, Math.min(expiryDays, 365)) : 30;
     window.CONFIG.fixedExpiryDate = window.CONFIG.fixedExpiryDate || "";
+    window.CONFIG.quotaEnabled = String(window.CONFIG.quotaEnabled || "false") === "true";
+    window.CONFIG.quotaStartDate = window.CONFIG.quotaStartDate || "";
+    window.CONFIG.quotaEndDate = window.CONFIG.quotaEndDate || "";
+    window.CONFIG.quotaLimit = Number.isFinite(quotaLimit) ? Math.max(1, Math.min(quotaLimit, 100000)) : 50;
   }
 
   async function initPageVisitTracking() {
