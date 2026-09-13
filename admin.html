@@ -42,7 +42,7 @@
 
         <section class="admin-card settings-card">
           <h2>Pengaturan Campaign</h2>
-          <p class="muted">Ubah nomor WhatsApp tujuan, masa berlaku, pesan WhatsApp, dan gambar template voucher.</p>
+          <p class="muted">Ubah nomor WhatsApp tujuan, awalan kode, masa berlaku, kuota voucher, pesan WhatsApp, dan gambar template voucher.</p>
           <form id="settingsForm" class="settings-form" novalidate>
             <div>
               <label for="settingWhatsapp">Nomor WhatsApp Tujuan</label>
@@ -66,6 +66,25 @@
             <div>
               <label for="settingFixedExpiryDate">Tanggal Expired Tetap</label>
               <input id="settingFixedExpiryDate" type="date">
+            </div>
+            <div>
+              <label for="settingQuotaEnabled">Sistem Kuota</label>
+              <select id="settingQuotaEnabled">
+                <option value="false">Nonaktif</option>
+                <option value="true">Aktif</option>
+              </select>
+            </div>
+            <div>
+              <label for="settingQuotaStartDate">Mulai Kuota</label>
+              <input id="settingQuotaStartDate" type="date">
+            </div>
+            <div>
+              <label for="settingQuotaEndDate">Selesai Kuota</label>
+              <input id="settingQuotaEndDate" type="date">
+            </div>
+            <div>
+              <label for="settingQuotaLimit">Maksimal Voucher</label>
+              <input id="settingQuotaLimit" type="number" min="1" max="100000" step="1" placeholder="50">
             </div>
             <div>
               <label for="settingTemplatePath">Gambar Voucher</label>
