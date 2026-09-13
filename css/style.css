@@ -1760,7 +1760,8 @@ body.campaign-page .voucher-fallback {
   background: #f5f1eb;
 }
 
-.settings-form input:disabled {
+.settings-form input:disabled,
+.settings-form select:disabled {
   color: #9c9199;
   background: #f5f1eb;
   cursor: not-allowed;
