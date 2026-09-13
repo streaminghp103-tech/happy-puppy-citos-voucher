@@ -83,14 +83,23 @@
             reject(new Error("Browser gagal membuat file PNG."));
             return;
           }
+          const fileName = `Voucher-HappyPuppy-Citos-${voucherCode}.png`;
+
+          if (window.navigator.msSaveBlob) {
+            window.navigator.msSaveBlob(blob, fileName);
+            resolve();
+            return;
+          }
+
           const url = URL.createObjectURL(blob);
           const link = document.createElement("a");
           link.href = url;
-          link.download = `Voucher-HappyPuppy-Citos-${voucherCode}.png`;
+          link.download = fileName;
+          link.rel = "noopener";
           document.body.appendChild(link);
           link.click();
           link.remove();
-          setTimeout(() => URL.revokeObjectURL(url), 1500);
+          setTimeout(() => URL.revokeObjectURL(url), 5000);
           resolve();
         }, "image/png");
       } catch (error) {

@@ -20,6 +20,10 @@
   const fallbackClaimDate = document.getElementById("fallbackClaimDate");
   const fallbackExpiryDate = document.getElementById("fallbackExpiryDate");
   const saveAndWhatsappButton = document.getElementById("saveAndWhatsappButton");
+  const downloadProgress = document.getElementById("downloadProgress");
+  const downloadProgressText = document.getElementById("downloadProgressText");
+  const downloadProgressPercent = document.getElementById("downloadProgressPercent");
+  const downloadProgressBar = document.getElementById("downloadProgressBar");
 
   function show(element) {
     element.classList.remove("hidden");
@@ -184,6 +188,24 @@
     saveAndWhatsappButton.textContent = isLoading ? "MENYIMPAN VOUCHER..." : "SIMPAN VOUCHER & BUKA WHATSAPP";
   }
 
+  function setDownloadProgress(percent, message) {
+    const safePercent = Math.max(0, Math.min(percent, 100));
+    downloadProgressBar.style.width = `${safePercent}%`;
+    downloadProgressPercent.textContent = `${safePercent}%`;
+    downloadProgressText.textContent = message;
+    show(downloadProgress);
+  }
+
+  function resetDownloadProgress() {
+    hide(downloadProgress);
+    setDownloadProgress(0, "Menyimpan voucher...");
+    hide(downloadProgress);
+  }
+
+  function wait(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
   function validateForm(customerName, whatsapp) {
     if (!customerName) return "Nama wajib diisi.";
     if (!whatsapp) return "Nomor WhatsApp wajib diisi.";
@@ -238,13 +260,26 @@
   saveAndWhatsappButton.addEventListener("click", async () => {
     clearError();
     setActionButtonLoading(true);
+    setDownloadProgress(12, "Menyiapkan file voucher...");
     try {
+      await wait(350);
+      setDownloadProgress(38, "Menyimpan voucher ke HP...");
       await downloadVoucher();
-      setTimeout(openWhatsApp, 400);
+      setDownloadProgress(78, "Menunggu browser menyelesaikan download...");
+      await wait(900);
+      setDownloadProgress(100, "Membuka WhatsApp...");
+      saveAndWhatsappButton.textContent = "MEMBUKA WHATSAPP...";
+      setTimeout(openWhatsApp, 650);
     } catch (error) {
-      setError(error.message || "Download voucher gagal. Coba tekan tombol lagi. Kalau masih gagal, tekan lama gambar voucher lalu simpan manual.");
-    } finally {
+      setError(error.message || "Download voucher gagal. Coba tekan tombol lagi. Kalau masih gagal, screenshot voucher ini lalu kirim ke WhatsApp.");
+      setDownloadProgress(100, "Download belum berhasil. Screenshot voucher ini.");
       setActionButtonLoading(false);
+      return;
+    } finally {
+      setTimeout(() => {
+        setActionButtonLoading(false);
+        resetDownloadProgress();
+      }, 2600);
     }
   });
 
